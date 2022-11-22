@@ -1,0 +1,61 @@
+h1 {
+    text-align: center;
+}
+
+.piano {
+    background-color: red;
+    width: 75vw;
+    height: 50vh;
+    margin: auto;
+    padding: 25px;
+}
+
+.keys {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    position: relative;
+}
+
+.white {
+    background-color: white;
+    width: 10%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    position: relative;
+    z-index: 0;
+}
+
+.black {
+    background-color: black;
+    color: white;
+    width: 6%;
+    height: 60%;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    position: absolute;
+    z-index: 1;
+}
+
+#note-c-sharp {
+    left: 7%;
+}
+
+#note-d-sharp {
+    left: 17%;
+}
+
+#note-f-sharp {
+    left: 38.5%;
+}
+
+#note-g-sharp {
+    left: 48.5%;
+}
+
+#note-a-sharp {
+    left: 58.5%;
+}
