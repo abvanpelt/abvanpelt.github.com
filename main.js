@@ -29,6 +29,29 @@ keys.forEach(key => {
     let oscillator = createOscillator(key.id);
 
     key.addEventListener(
+        "touchstart",
+        function (e) {
+            // Cancel the event, to prevent both "touch" and "mouse" events from being triggered.
+            e.preventDefault();
+
+            // Play note
+            oscillator.start();
+        }
+    );
+
+    key.addEventListener(
+        "touchend",
+        function () {
+            // Stop note
+            oscillator.stop();
+
+            // Create a new OscillatorNode for this note
+            // An OscillatorNode cannot be re-started after being stopped.
+            oscillator = createOscillator(key.id);
+        }
+    );
+
+    key.addEventListener(
         "mousedown",
         function () {
             // Play note
@@ -37,7 +60,7 @@ keys.forEach(key => {
     );
 
     key.addEventListener(
-        "click",
+        "mouseup",
         function () {
             // Stop note
             oscillator.stop();
