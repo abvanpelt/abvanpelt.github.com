@@ -17,13 +17,10 @@ const frequencies = {
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioContext = new AudioContext();
 
-// Create a GainNode & initialize the volume level
-const volume = audioContext.createGain();
-volume.gain.value = 1;
+// Create the GainNode
+const volume = createVolume()
 
-// Connect the GainNode to the audio output
-volume.connect(audioContext.destination);
-
+// Create the OscillatorNode
 let oscillator = createOscillator();
 let audioEnded = true;
 
@@ -65,6 +62,17 @@ keys.forEach(key => {
     key.addEventListener("mouseup", stopAudio);
 }
 );
+
+function createVolume() {
+    // Create a GainNode & initialize the volume level
+    const volume = audioContext.createGain();
+    volume.gain.value = 1;
+
+    // Connect the GainNode to the audio output
+    volume.connect(audioContext.destination);
+
+    return volume;
+}
 
 function createOscillator() {
     // Create an OscillatorNode & initialize the waveform
