@@ -24,6 +24,8 @@ volume.gain.value = 1;
 // Connect the GainNode to the audio output
 volume.connect(audioContext.destination);
 
+let audioEnded = true;
+
 const keys = document.querySelectorAll(".key");
 keys.forEach(key => {
     let oscillator = createOscillator(key.id);
@@ -36,18 +38,24 @@ keys.forEach(key => {
 
             // Play note
             oscillator.start();
+
+            audioEnded = false;
         }
     );
 
     key.addEventListener(
         "touchend",
         function () {
-            // Stop note
-            oscillator.stop();
+            if (!audioEnded) {
+                // Stop note
+                oscillator.stop();
 
-            // Create a new OscillatorNode for this note
-            // An OscillatorNode cannot be re-started after being stopped.
-            oscillator = createOscillator(key.id);
+                // Create a new OscillatorNode for this note
+                // An OscillatorNode cannot be re-started after being stopped.
+                oscillator = createOscillator(key.id);
+
+                audioEnded = true;
+            }
         }
     );
 
@@ -56,18 +64,40 @@ keys.forEach(key => {
         function () {
             // Play note
             oscillator.start();
+
+            audioEnded = false;
+        }
+    );
+
+    key.addEventListener(
+        "mouseout",
+        function () {
+            if (!audioEnded) {
+                // Stop note
+                oscillator.stop();
+
+                // Create a new OscillatorNode for this note
+                // An OscillatorNode cannot be re-started after being stopped.
+                oscillator = createOscillator(key.id);
+
+                audioEnded = true;
+            }
         }
     );
 
     key.addEventListener(
         "mouseup",
         function () {
-            // Stop note
-            oscillator.stop();
+            if (!audioEnded) {
+                // Stop note
+                oscillator.stop();
 
-            // Create a new OscillatorNode for this note
-            // An OscillatorNode cannot be re-started after being stopped.
-            oscillator = createOscillator(key.id);
+                // Create a new OscillatorNode for this note
+                // An OscillatorNode cannot be re-started after being stopped.
+                oscillator = createOscillator(key.id);
+
+                audioEnded = true;
+            }
         }
     );
 }
@@ -78,6 +108,8 @@ function createOscillator(note) {
     const oscillator = new OscillatorNode(audioContext);
     oscillator.type = 'sine';
     oscillator.frequency.value = frequencies[note];
+
+    oscillator.addEventListener("ended", () => audioEnded = true);
 
     // Connect the OscillatorNode (audio source) to the GainNode (audio effect)
     oscillator.connect(volume);
