@@ -24,90 +24,52 @@ volume.gain.value = 1;
 // Connect the GainNode to the audio output
 volume.connect(audioContext.destination);
 
+let oscillator = createOscillator();
 let audioEnded = true;
+
+const playAudio = function (event, id) {
+    // Cancel the event, to prevent both "touch" and "mouse" events from being triggered.
+    event.preventDefault();
+
+    // Set frequency and play note
+    oscillator.frequency.value = frequencies[id];
+    oscillator.start();
+
+    // Reset flag
+    audioEnded = false;
+};
+
+const stopAudio = function () {
+    if (!audioEnded) {
+        // Stop note
+        oscillator.stop();
+
+        // Create a new OscillatorNode for this note
+        // An OscillatorNode cannot be re-started after being stopped.
+        oscillator = createOscillator();
+
+        // Reset flag
+        audioEnded = true;
+    }
+};
 
 const keys = document.querySelectorAll(".key");
 keys.forEach(key => {
-    let oscillator = createOscillator(key.id);
+    // Play audio on touchstart or mousedown
+    key.addEventListener("touchstart", event => playAudio(event, key.id));
+    key.addEventListener("mousedown", event => playAudio(event, key.id));
 
-    key.addEventListener(
-        "touchstart",
-        function (e) {
-            // Cancel the event, to prevent both "touch" and "mouse" events from being triggered.
-            e.preventDefault();
-
-            // Play note
-            oscillator.start();
-
-            audioEnded = false;
-        }
-    );
-
-    key.addEventListener(
-        "touchend",
-        function () {
-            if (!audioEnded) {
-                // Stop note
-                oscillator.stop();
-
-                // Create a new OscillatorNode for this note
-                // An OscillatorNode cannot be re-started after being stopped.
-                oscillator = createOscillator(key.id);
-
-                audioEnded = true;
-            }
-        }
-    );
-
-    key.addEventListener(
-        "mousedown",
-        function () {
-            // Play note
-            oscillator.start();
-
-            audioEnded = false;
-        }
-    );
-
-    key.addEventListener(
-        "mouseout",
-        function () {
-            if (!audioEnded) {
-                // Stop note
-                oscillator.stop();
-
-                // Create a new OscillatorNode for this note
-                // An OscillatorNode cannot be re-started after being stopped.
-                oscillator = createOscillator(key.id);
-
-                audioEnded = true;
-            }
-        }
-    );
-
-    key.addEventListener(
-        "mouseup",
-        function () {
-            if (!audioEnded) {
-                // Stop note
-                oscillator.stop();
-
-                // Create a new OscillatorNode for this note
-                // An OscillatorNode cannot be re-started after being stopped.
-                oscillator = createOscillator(key.id);
-
-                audioEnded = true;
-            }
-        }
-    );
+    // Stop audio on touchend, mouseout, or mouseup
+    key.addEventListener("touchend", stopAudio);
+    key.addEventListener("mouseout", stopAudio);
+    key.addEventListener("mouseup", stopAudio);
 }
 );
 
-function createOscillator(note) {
+function createOscillator() {
     // Create an OscillatorNode & initialize the waveform
     const oscillator = new OscillatorNode(audioContext);
     oscillator.type = 'sine';
-    oscillator.frequency.value = frequencies[note];
 
     oscillator.addEventListener("ended", () => audioEnded = true);
 
