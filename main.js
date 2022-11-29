@@ -28,6 +28,12 @@ const playAudio = function (event, id) {
     // Cancel the event, to prevent both "touch" and "mouse" events from being triggered.
     event.preventDefault();
 
+    // Start the AudioContext after user interaction
+    // This may be necessary due to browser autoplay policies
+    if (audioContext.state === "suspended") {
+        audioContext.resume();
+    }
+
     // Set frequency and play note
     oscillator.frequency.value = frequencies[id];
     oscillator.start();
